@@ -83,7 +83,7 @@ int bsk_valid_frame(bsk_frame_t* pFrame)
 int play_game()
 {
 	// use these variables if you wish; they are not compulsory
-	int sum=0;
+	int sum=1;
 	bsk_game_t bsk_game;
 	int f=0;
 
