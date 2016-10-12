@@ -23,16 +23,21 @@
 //
 // return value for the subroutine is:
 //   ERR_PARAM_NULL if pFrame is zero/NULL
-//   ERR_BAD_THROW_INDEX if index is not 1 or 2
+//   ERR_BAD_THROW if index is not 1 or 2
 //   1 for reading the first throw
 //   2 for reading the second throw
 //   ERR_READ_FAILED if i2c_read returns other than 1
 //
 int bsk_get_throw(bsk_frame_t* pFrame,int index)
 {
-	if ( 0==pFrame ){
+	if ( 0==pFrame )
 		return ERR_PARAM_NULL;
-	}
+	if (index == 1)
+		return pFrame->first_throw;
+	else if (index == 2)
+		return pFrame->second_throw;
+
+	return ERR_BAD_THROW;
 	//
 	// reminder about pointers:
 	//
@@ -40,8 +45,6 @@ int bsk_get_throw(bsk_frame_t* pFrame,int index)
 	//
 	// pFrame->first_throw = 2; set the value of "first_throw"
 	//
-
-	return ERR_BAD_THROW;
 }
 
 //
@@ -53,8 +56,12 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 		return ERR_PARAM_NULL;
 	}
 	int sum=0;
+	int index=0;
 
-	return -1;
+	index = i2c_read(HW_BSK_PIN_COUNTER,0,0,,1);
+	for(int i=0; i<frames; i++)
+		sum += bsk_get_throw(pGame->frames[i],index);
+	return sum;
 }
 
 //
