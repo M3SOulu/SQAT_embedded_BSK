@@ -37,7 +37,6 @@ int main(void)
     // Display setup
 	disp_on( DISP_SHOW_NONE );
 	disp_reset( DISP_SHOW_NONE );
-
 	// Main loop -- you do not have to tocuh it
 	while( 1 ){
 		play_game();
