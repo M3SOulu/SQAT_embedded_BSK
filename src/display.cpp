@@ -128,14 +128,14 @@ int disp_on(int alloff)
 // define these (correctly), now the all display as "-"
 //
 
-#define SEGMENTS_2 64
-#define SEGMENTS_3 64
-#define SEGMENTS_4 64
-#define SEGMENTS_5 64
-#define SEGMENTS_6 64
-#define SEGMENTS_7 64
-#define SEGMENTS_8 64
-#define SEGMENTS_9 64
+#define SEGMENTS_2 91
+#define SEGMENTS_3 79
+#define SEGMENTS_4 102
+#define SEGMENTS_5 109
+#define SEGMENTS_6 125
+#define SEGMENTS_7 7
+#define SEGMENTS_8 127
+#define SEGMENTS_9 111
 
 //
 // mapping of number to its segment data:
@@ -166,7 +166,47 @@ const char digit_segments[10]={
 //
 int disp_digit_of(int value,unsigned int n)
 {
-	return -1;
+
+// I discovered a bug while implementing this now, as the number 0 doesn't work.
+
+	unsigned int count = 0;
+	unsigned int tempValue = value;
+
+	while (tempValue != 0)
+	{
+		tempValue /= 10;
+		count++;
+	}
+
+	int numberArray[count];
+
+	count = 0;
+	tempValue = value;
+
+	/* extracting each digit */
+	while (tempValue != 0)
+	{
+		numberArray[count] = tempValue % 10;
+		tempValue /= 10;
+		count++;
+	}
+
+	int lengthArray = sizeof(numberArray) / sizeof(numberArray[0]);
+
+	if (n >= lengthArray){
+		return -1;
+	}
+
+	else if (n < 0){
+		return -1;
+	}
+
+	else{
+	unsigned int returnValue = numberArray[n];
+
+	return returnValue;
+	}
+
 }
 
 
@@ -178,6 +218,12 @@ int disp_digit_of(int value,unsigned int n)
 int disp_show_decimal(int value)
 {
 	const int addr = HW_I2C_ADDR_HT16K33;
+
+	disp_msg_data[1] = digit_segments[disp_digit_of(value,3)];
+	disp_msg_data[3] = digit_segments[disp_digit_of(value,2)];
+	disp_msg_data[7] = digit_segments[disp_digit_of(value,1)];
+	disp_msg_data[9] = digit_segments[disp_digit_of(value,0)];
+
 
 	return i2c_write( addr,disp_msg_data,10 );
 }
