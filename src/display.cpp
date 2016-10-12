@@ -10,6 +10,7 @@
 #include "ht16k33.h"
 #include "display.h"
 
+
 int disp_off()
 {
 	const int addr = HW_I2C_ADDR_HT16K33;
@@ -128,14 +129,14 @@ int disp_on(int alloff)
 // define these (correctly), now the all display as "-"
 //
 
-#define SEGMENTS_2 64
-#define SEGMENTS_3 64
-#define SEGMENTS_4 64
-#define SEGMENTS_5 64
-#define SEGMENTS_6 64
-#define SEGMENTS_7 64
-#define SEGMENTS_8 64
-#define SEGMENTS_9 64
+#define SEGMENTS_2 91
+#define SEGMENTS_3 79
+#define SEGMENTS_4 102
+#define SEGMENTS_5 109
+#define SEGMENTS_6 125
+#define SEGMENTS_7 7
+#define SEGMENTS_8 127
+#define SEGMENTS_9 103
 
 //
 // mapping of number to its segment data:
@@ -166,9 +167,19 @@ const char digit_segments[10]={
 //
 int disp_digit_of(int value,unsigned int n)
 {
-	return -1;
+	while (n > 0) {
+		value /= 10;
+		n--;
+	}
+
+	return digit_segments[(value % 10)];
 }
 
+
+/*
+ *
+ *
+ */
 
 //
 // map decimal numbers of "value" to digits in the
@@ -178,6 +189,10 @@ int disp_digit_of(int value,unsigned int n)
 int disp_show_decimal(int value)
 {
 	const int addr = HW_I2C_ADDR_HT16K33;
+
+	disp_msg_data[9] = disp_digit_of(value, 0);
+	disp_msg_data[7] = disp_digit_of(value, 1);
+	disp_msg_data[3] = disp_digit_of(value, 2);
 
 	return i2c_write( addr,disp_msg_data,10 );
 }

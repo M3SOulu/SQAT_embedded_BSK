@@ -33,6 +33,18 @@ int bsk_get_throw(bsk_frame_t* pFrame,int index)
 	if ( 0==pFrame ){
 		return ERR_PARAM_NULL;
 	}
+
+	char pinsKnocked = 0;
+	if (i2c_read(0x90, 0, 0, &pinsKnocked, 1) != 1)
+		return ERR_READ_FAILED;
+
+	if (index == 1) {
+		pFrame->first_throw = pinsKnocked;
+		return pFrame->first_throw;
+	} else if (index == 2) {
+		pFrame->second_throw = pinsKnocked;
+		return pFrame->second_throw;
+	}
 	//
 	// reminder about pointers:
 	//
@@ -54,7 +66,13 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 	}
 	int sum=0;
 
-	return -1;
+	for (int i = 0; i < frames; i++) {
+		sum += pGame->frames[i].first_throw;
+		sum += pGame->frames[i].second_throw;
+	}
+
+
+	return sum;
 }
 
 //
@@ -70,7 +88,26 @@ int bsk_valid_frame(bsk_frame_t* pFrame)
 		return -1;
 	}
 
-	return -1;
+	if (pFrame->first_throw > 10 || pFrame->first_throw < 0 ||
+		pFrame->second_throw > 10 || pFrame->second_throw < 0 ||
+		(pFrame->first_throw + pFrame->second_throw) > 10) {
+		return 1;
+	}
+
+	return 0;
+}
+
+int sum=0;
+bsk_game_t bsk_game;
+int err = 0;
+int nextThrow = 1;
+int validFrames = 0;
+int displayValidFrames = 0;
+bsk_frame_t* frame;
+
+void update_score() {
+	sum = bsk_calculate(&bsk_game, displayValidFrames);
+	disp_show_decimal( sum );
 }
 
 //
@@ -82,15 +119,55 @@ int bsk_valid_frame(bsk_frame_t* pFrame)
 //
 int play_game()
 {
-	// use these variables if you wish; they are not compulsory
-	int sum=0;
-	bsk_game_t bsk_game;
-	int f=0;
-
 	//
 	// show initial score (zero)
 	//
 	disp_show_decimal( sum );
 
+	if (validFrames >= 10)
+		return -1;
+
+	frame = &bsk_game.frames[validFrames];
+	err = bsk_get_throw(frame, nextThrow);
+
+	if (err == ERR_PARAM_NULL || err == ERR_READ_FAILED || err == ERR_BAD_THROW) {
+		nextThrow = 1;
+		return -1;
+	}
+
+	if (nextThrow == 1) {
+		frame->second_throw = 0;
+	}
+
+	if (bsk_valid_frame(frame) != 0) {
+		frame->first_throw = 0;
+		frame->second_throw = 0;
+		nextThrow = 1;
+
+		update_score();
+
+		return -1;
+	}
+
+	if (frame->first_throw == 10) {
+		nextThrow = 1;
+	} else {
+		nextThrow++;
+		if (nextThrow == 3)
+			nextThrow = 1;
+	}
+
+	if (nextThrow == 1)
+		validFrames++;
+
+	if (nextThrow == 2) {
+		displayValidFrames = validFrames + 1;
+	} else {
+		displayValidFrames = validFrames;
+	}
+
+	update_score();
+
 	return -1;
 }
+
