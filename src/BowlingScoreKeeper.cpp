@@ -38,10 +38,10 @@ int main(void)
 	disp_on( DISP_SHOW_NONE );
 	disp_reset( DISP_SHOW_NONE );
 
-	// Main loop -- you do not have to tocuh it
-	while( 1 ){
+	// Main loop -- you do not have to touch it
+	while (1) {
 		play_game();
 		delay_1s();
 	}
-    return 0 ;
+    return 0;
 }

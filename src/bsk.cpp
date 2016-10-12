@@ -28,11 +28,21 @@
 //   2 for reading the second throw
 //   ERR_READ_FAILED if i2c_read returns other than 1
 //
-int bsk_get_throw(bsk_frame_t* pFrame,int index)
+int bsk_get_throw(bsk_frame_t* pFrame, int index)
 {
-	if ( 0==pFrame ){
+	if (!pFrame) {
 		return ERR_PARAM_NULL;
 	}
+
+	if (index != 1 && index != 2) {
+		return ERR_BAD_THROW;
+	}
+
+	char result;
+	if (i2c_read(0x90, 0, 0, &result, 1) != 1) {
+		return ERR_READ_FAILED;
+	}
+
 	//
 	// reminder about pointers:
 	//
@@ -41,18 +51,25 @@ int bsk_get_throw(bsk_frame_t* pFrame,int index)
 	// pFrame->first_throw = 2; set the value of "first_throw"
 	//
 
-	return ERR_BAD_THROW;
+	if (index == 1) {
+		pFrame->first_throw = result;
+	} else {
+		pFrame->second_throw = result;
+	}
+
+	return index;
 }
 
 //
 // calculate the sum of points of "frames" first frames
 //
-int bsk_calculate(bsk_game_t* pGame,int frames)
+int bsk_calculate(bsk_game_t* pGame, int frames)
 {
-	if ( 0==pGame ){
+	if (!pGame) {
 		return ERR_PARAM_NULL;
 	}
-	int sum=0;
+
+	int sum = 0;
 
 	return -1;
 }
@@ -66,11 +83,26 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 //
 int bsk_valid_frame(bsk_frame_t* pFrame)
 {
-	if ( 0==pFrame ){
+	if (!pFrame) {
 		return -1;
 	}
 
-	return -1;
+	// bad first throw
+	if (pFrame->first_throw < 0 || pFrame->first_throw > 10) {
+		return 1;
+	}
+
+	// bad second throw
+	if (pFrame->second_throw < 0 || pFrame->second_throw > 10) {
+		return 1;
+	}
+
+	// bad sum
+	if (pFrame->first_throw + pFrame->second_throw > 10) {
+		return 1;
+	}
+
+	return 0;
 }
 
 //
@@ -83,14 +115,59 @@ int bsk_valid_frame(bsk_frame_t* pFrame)
 int play_game()
 {
 	// use these variables if you wish; they are not compulsory
-	int sum=0;
+	int sum = 0;
 	bsk_game_t bsk_game;
-	int f=0;
 
 	//
 	// show initial score (zero)
 	//
-	disp_show_decimal( sum );
+	disp_show_decimal(sum);
+	delay_1s();
+
+	//
+	// subsequent throws
+	//
+	for (int i = 0; i < 10; i++) {
+		while (1) {
+			bsk_game.frames[i].first_throw = 0;
+			bsk_game.frames[i].second_throw = 0;
+
+			// first throw
+			if (bsk_get_throw(&bsk_game.frames[i], 1) != 1) {
+				continue;
+			}
+
+			if (bsk_valid_frame(&bsk_game.frames[i]) != 0) {
+				continue;
+			}
+
+			int first_throw_score = bsk_game.frames[i].first_throw;
+			if (first_throw_score == 10) {
+				sum += first_throw_score;
+				break;
+			}
+
+			disp_show_decimal(sum + first_throw_score);
+			delay_1s();
+
+			// second throw
+			if (bsk_get_throw(&bsk_game.frames[i], 2) != 2) {
+				continue;
+			}
+
+			if (bsk_valid_frame(&bsk_game.frames[i]) != 0) {
+				continue;
+			}
+
+			sum += first_throw_score;
+			sum += bsk_game.frames[i].second_throw;
+
+			break;
+		}
+
+		disp_show_decimal(sum);
+		delay_1s();
+	}
 
 	return -1;
 }
