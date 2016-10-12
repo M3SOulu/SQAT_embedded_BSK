@@ -12,6 +12,7 @@
 #define ERR_BAD_THROW   -2
 #define ERR_READ_FAILED -3
 #define ERR_BAD_FRAME   -4
+#define ERR_BAD_THROW_INDEX -5
 
 typedef struct bsk_frame {
 	int first_throw;
@@ -26,6 +27,7 @@ typedef struct bsk_game {
 
 int bsk_get_throw(bsk_frame_t* pFrame,int index);
 int bsk_calculate(bsk_game_t* pGame,int frames);
+int bsk_valid_frame(bsk_frame_t* pFrame);
 
 int play_game();
 
