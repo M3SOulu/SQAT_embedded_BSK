@@ -12,6 +12,7 @@
 #define ERR_BAD_THROW   -2
 #define ERR_READ_FAILED -3
 #define ERR_BAD_FRAME   -4
+#define ERR_BAD_THROW_INDEX   -8
 
 typedef struct bsk_frame {
 	int first_throw;
