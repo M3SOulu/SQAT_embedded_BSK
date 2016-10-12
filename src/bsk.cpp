@@ -67,6 +67,7 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 int bsk_valid_frame(bsk_frame_t* pFrame)
 {
 	if ( 0==pFrame ){
+
 		return -1;
 	}
 

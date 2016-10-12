@@ -128,14 +128,14 @@ int disp_on(int alloff)
 // define these (correctly), now the all display as "-"
 //
 
-#define SEGMENTS_2 64
-#define SEGMENTS_3 64
-#define SEGMENTS_4 64
-#define SEGMENTS_5 64
-#define SEGMENTS_6 64
-#define SEGMENTS_7 64
-#define SEGMENTS_8 64
-#define SEGMENTS_9 64
+#define SEGMENTS_2 91
+#define SEGMENTS_3 79
+#define SEGMENTS_4 102
+#define SEGMENTS_5 109
+#define SEGMENTS_6 125
+#define SEGMENTS_7 7
+#define SEGMENTS_8 127
+#define SEGMENTS_9 111
 
 //
 // mapping of number to its segment data:
@@ -155,6 +155,8 @@ const char digit_segments[10]={
 		SEGMENTS_9,
 };
 
+
+
 //
 // return the Nth rightmost digit from value
 //   value | n | result
@@ -164,9 +166,25 @@ const char digit_segments[10]={
 //   417   | 2 | 4
 //   417   | 3 | 0
 //
+
+
 int disp_digit_of(int value,unsigned int n)
+
+
 {
-	return -1;
+
+
+	char digit[4];
+	int size = sizeof(digit);
+	int return_val = 0;
+	if (n > size)
+		return -1;
+	for (int i = 0; i < size; i ++) {
+		std:cout << i << "%d" << digit[i] << std::endl;
+	}
+	return_val = (int)digit[1-1-n];
+	return return_val;
+
 }
 
 
