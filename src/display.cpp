@@ -169,6 +169,7 @@ int getPow(int value, int number) {
 //   417   | 2 | 4
 //   417   | 3 | 0
 //
+
 int disp_digit_of(int value, unsigned int n) {
 	int result = 0;
 	unsigned int count = 0;

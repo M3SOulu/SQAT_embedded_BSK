@@ -142,6 +142,7 @@ int play_game() {
 
 	}
 
+
 //
 // show initial score (zero)
 //
