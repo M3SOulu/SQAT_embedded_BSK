@@ -29,7 +29,6 @@ int main(void)
 #if defined (__USE_LPCOPEN)
     SystemCoreClockUpdate();
 #endif
-
     // Configuration of SWM and I2C
     swm_config_i2c();
     i2c_reset();

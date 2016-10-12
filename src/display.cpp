@@ -201,6 +201,7 @@ void disp_set_value(int value, int index) {
 // 7-segment display: calculate what segments to
 // show on each position so that "value" is displayed
 //
+
 int disp_show_decimal(int value) {
 	const int addr = HW_I2C_ADDR_HT16K33;
 
