@@ -179,5 +179,54 @@ int disp_show_decimal(int value)
 {
 	const int addr = HW_I2C_ADDR_HT16K33;
 
+	char disp_msg_data[10];
+	for(int i=0; i<10;i++) {
+		if(4 != i) {
+			int x = value % 10;
+			switch(x) {
+			case 0 :
+				disp_msg_data[9-i] = 63;
+				break;
+			case 1 :
+				disp_msg_data[9-i] = 6;
+				break;
+			case 2 :
+				disp_msg_data[9-i] = 91;
+				break;
+			case 3 :
+				disp_msg_data[9-i] = 79;
+				break;
+			case 4 :
+				disp_msg_data[9-i] = 102;
+				break;
+			case 5 :
+				disp_msg_data[9-i] = 109;
+				break;
+			case 6 :
+				disp_msg_data[9-i] = 125;
+				break;
+			case 7 :
+				disp_msg_data[9-i] = 7;
+				break;
+			case 8 :
+				disp_msg_data[9-i] = 127;
+				break;
+			case 9 :
+				disp_msg_data[9-i] = 111;
+			}
+			value /= 10;
+			i++;
+		}
+		else {
+			i++;
+		}
+	}
+	disp_msg_data[8] = 4;
+	disp_msg_data[6] = 3;
+	disp_msg_data[5] = 0;
+	disp_msg_data[4] = 2;
+	disp_msg_data[2] = 1;
+	disp_msg_data[0] = 0;
+
 	return i2c_write( addr,disp_msg_data,10 );
 }
