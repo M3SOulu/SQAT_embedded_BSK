@@ -58,9 +58,9 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 	int sum=0;
 	int index=0;
 
-	index = i2c_read(HW_BSK_PIN_COUNTER,0,0,,1);
+	//index = i2c_read(HW_BSK_PIN_COUNTER,0,0,,1);
 	for(int i=0; i<frames; i++)
-		sum += bsk_get_throw(pGame->frames[i],index);
+		//sum += bsk_get_throw(pGame->frames[i],index);
 	return sum;
 }
 
