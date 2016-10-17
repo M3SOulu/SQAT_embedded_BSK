@@ -8,6 +8,7 @@
 #ifndef BSK_H_
 #define BSK_H_
 
+#define READ_OK			0
 #define ERR_PARAM_NULL  -1
 #define ERR_BAD_THROW   -2
 #define ERR_READ_FAILED -3

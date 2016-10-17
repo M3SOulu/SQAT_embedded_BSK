@@ -23,7 +23,8 @@ int disp_off()
 	return rc;
 }
 
-static char disp_msg_data[10]={
+static char disp_msg_data[10]=
+{
 		0,0,
 		1,0,
 		2,0,
@@ -136,6 +137,8 @@ int disp_on(int alloff)
 #define SEGMENTS_7 7
 #define SEGMENTS_8 127
 #define SEGMENTS_9 103
+#define SEGMENTS_E 121
+#define SEGMENTS_R 80
 
 //
 // mapping of number to its segment data:
@@ -164,6 +167,10 @@ const char digit_segments[10]={
 //   417   | 2 | 4
 //   417   | 3 | -1
 //
+// This function is NOT used,
+// disp_show_decimal solves this task
+// in a more simplified way
+//
 int disp_digit_of(int value,unsigned int n)
 {
 	while (n-- > 0)
@@ -186,6 +193,29 @@ int disp_digit_of(int value,unsigned int n)
 int disp_show_decimal(int value)
 {
 	const int addr = HW_I2C_ADDR_HT16K33;
+	// // just testing
+	// value = -1;
+	// value = 1234;
 
+	// This error check is not defined in the task specification
+	if (value < 0 || value > 9999)
+	{
+		// Shows text: "Err"
+		disp_msg_data[1] = SEGMENTS_NONE;
+		disp_msg_data[3] = SEGMENTS_E;
+		disp_msg_data[7] = SEGMENTS_R;
+		disp_msg_data[9] = SEGMENTS_R;
+	}
+	else
+	{
+		// Shows the decimal number in the range 0-9999
+		disp_msg_data[9] = digit_segments[value % 10];
+		value /= 10;
+		disp_msg_data[7] = (value == 0) ? SEGMENTS_NONE : digit_segments[value % 10];
+		value /= 10;
+		disp_msg_data[3] = (value == 0) ? SEGMENTS_NONE : digit_segments[value % 10];
+		value /= 10;
+		disp_msg_data[1] = (value == 0) ? SEGMENTS_NONE : digit_segments[value % 10];
+	}
 	return i2c_write( addr,disp_msg_data,10 );
 }
