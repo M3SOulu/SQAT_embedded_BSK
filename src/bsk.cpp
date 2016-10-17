@@ -130,23 +130,25 @@ int play_game() {
 
 	while (f < 10) {
 		// reads first frame first throw
+
+		first_throw_value = disp_get_decimal();
 		bsk_set_throw(&bsk_game->frames[f], 1, first_throw_value);
+
+		disp_show_decimal(first_throw_value);
 
 		if (first_throw_value == 10)
 			f++;
+
 		else // second throw value
 		{
+			second_throw_value = disp_get_decimal();
 			bsk_set_throw(&bsk_game->frames[f], 2, second_throw_value);
+			disp_show_decimal(second_throw_value);
 			f++;
 		}
 
 	}
-
-
-//
-// show initial score (zero)
-//
-	bsk_calculate(bsk_game, f);
+	sum = bsk_calculate(bsk_game, f);
 	disp_show_decimal(sum);
 
 	return -1;

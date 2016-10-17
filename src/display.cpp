@@ -154,8 +154,8 @@ int getDigitCount(int number) {
 }
 
 int getPow(int value, int number) {
-	int sum = value;
-	for (int loop = 1; loop < number; loop++) {
+	int sum = 1;
+	for (int loop = 1; loop <= number; loop++) {
 		sum = sum * value;
 	}
 	return sum;
@@ -175,7 +175,7 @@ int disp_digit_of(int value, unsigned int n) {
 	unsigned int count = 0;
 	if (0 != value) {
 		count = getDigitCount(value);
-		if (n <= (count - 1)) {
+		if (n <= (count -1)) {
 			value = value / getPow(10, n);
 			result = value % 10;
 			return result;
@@ -204,7 +204,11 @@ void disp_set_value(int value, int index) {
 //
 
 int disp_show_decimal(int value) {
+
 	const int addr = HW_I2C_ADDR_HT16K33;
+	disp_on(DISP_SHOW_NONE);
+	disp_reset(DISP_SHOW_NONE);
+	disp_msg_data[0] = 0;
 
 	if (value < 10)
 		disp_set_value(value, 1);
@@ -212,9 +216,42 @@ int disp_show_decimal(int value) {
 	if (value > 10) {
 		int count = getDigitCount(value);
 		for (int i = 0; i < count; i++) {
-			disp_set_value(disp_digit_of(value, i), (i + 1));
+			disp_set_value(disp_digit_of(value, i), i+1);
 		}
 	}
 
 	return i2c_write(addr, disp_msg_data, 10);
 }
+
+int getValueFromSegment(int value){
+	if( value == SEGMENTS_0)
+		return 0;
+	else if(value == SEGMENTS_1)
+		return 1;
+	else if(value == SEGMENTS_2)
+			return 2;
+	else if(value == SEGMENTS_3)
+			return 3;
+	else if(value == SEGMENTS_4)
+			return 4;
+	else if(value == SEGMENTS_5)
+			return 5;
+	else if(value == SEGMENTS_6)
+			return 6;
+	else if(value == SEGMENTS_7)
+			return 7;
+	else if(value == SEGMENTS_8)
+			return 8;
+	else if(value == SEGMENTS_9)
+			return 9;
+}
+
+int disp_get_decimal() {
+	const int addr = 0x90;
+
+	i2c_read(addr, 0, 0, disp_msg_data, 1);
+
+	return getValueFromSegment(disp_msg_data[0]);
+}
+
+
