@@ -9,7 +9,6 @@
 #include "hardware.h"
 #include "ht16k33.h"
 #include "display.h"
-#include "math.h"
 
 int disp_off()
 {
@@ -130,7 +129,7 @@ int disp_on(int alloff)
 //
 
 #define SEGMENTS_2 91
-#define SEGMENTS_3 78
+#define SEGMENTS_3 79
 #define SEGMENTS_4 102
 #define SEGMENTS_5 109
 #define SEGMENTS_6 125
@@ -168,18 +167,21 @@ const char digit_segments[10]={
 //
 int disp_digit_of(int value,unsigned int n)
 {
-	int res;
+	int res = value;
 
-	if (n > 0) {
-		// cut off right part beside digit
-		res = value >> n;
+	int pow_ten = 1;
+	for (int i=0; i<n; i++) {
+		pow_ten *= 10;
 	}
+	// cut off right part beside digit
+	res = res / pow_ten;
 
 	// cut off left part besides the digit
 	res = res % 10;
 
 	return res;
 }
+
 
 
 //
@@ -193,12 +195,13 @@ int disp_show_decimal(int value)
 
 	for (int i=0; i<4; i++) {
 		if (i < 2) {
-			disp_msg_data[i*2 + 1] = digit_segments[disp_digit_of(value, i)];
+			disp_msg_data[i*2 + 1] = digit_segments[disp_digit_of(value, (3-i))];
 		} else {
-			disp_msg_data[(i+1)*2 + 1] = digit_segments[disp_digit_of(value, i)];
+			disp_msg_data[(i+1)*2 + 1] = digit_segments[disp_digit_of(value, (3-i))];
 		}
 	}
-	disp_msg_data[2] = 0;
+	disp_msg_data[5] = 0;
+
 
 	return i2c_write( addr,disp_msg_data,10 );
 }

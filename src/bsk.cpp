@@ -42,13 +42,13 @@ int bsk_get_throw(bsk_frame_t* pFrame,int index)
 	// pFrame->first_throw = 2; set the value of "first_throw"
 	//
 
-	char* c_data;
-	i2c_read(0x90, 0, 0, c_data, 1);
-	int i_data;
+	char c_data;
+	i2c_read(0x90, 0, 0, &c_data, 1);
+	int i_data = c_data - '0';
 
 	if (index == 1) {
 		pFrame->first_throw = i_data;
-		if (i_data = 10) {
+		if (i_data == 10) {
 			pFrame->second_throw = 0;
 		}
 		return index;
