@@ -42,7 +42,10 @@ int main(void)
 	// Main loop -- you do not have to touch it
 	while( 1 )
 	{
-		play_game();
+		if (ERROR_IN_GAME == play_game())
+		{
+			return -1;
+		}
 		delay_1s();
 	}
     return 0 ;
