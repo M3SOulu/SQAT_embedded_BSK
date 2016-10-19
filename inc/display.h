@@ -29,6 +29,7 @@ void disp_reset(int alloff);
 
 int disp_digit_of(int value,unsigned int n);
 int disp_show_decimal( int value );
+int disp_get_decimal();
 
 #ifdef __cplusplus
 }

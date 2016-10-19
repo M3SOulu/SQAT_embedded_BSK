@@ -24,12 +24,12 @@
 #include "i2c.h"
 #include "bsk.h"
 
+
 int main(void)
 {
 #if defined (__USE_LPCOPEN)
     SystemCoreClockUpdate();
 #endif
-
     // Configuration of SWM and I2C
     swm_config_i2c();
     i2c_reset();
@@ -37,7 +37,6 @@ int main(void)
     // Display setup
 	disp_on( DISP_SHOW_NONE );
 	disp_reset( DISP_SHOW_NONE );
-
 	// Main loop -- you do not have to tocuh it
 	while( 1 ){
 		play_game();
