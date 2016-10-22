@@ -26,8 +26,8 @@ void delay_1s()
 	// MUST use volatile here because otherwise the compiler
 	// might optimize the whole loop away!
 
-//	volatile int d = DELAY_1_0;
-	int d = DELAY_1_0;
+	volatile int d = DELAY_1_0;
+//	int d = DELAY_1_0;
 	delay( d );
 }
 
