@@ -30,9 +30,40 @@
 //
 int bsk_get_throw(bsk_frame_t* pFrame,int index)
 {
+	if( index > 2 || index < 1) {
+		return ERR_BAD_THROW_INDEX;
+	}
 	if ( 0==pFrame ){
 		return ERR_PARAM_NULL;
 	}
+	char data = 11;
+	while(1) {
+		while(data > 10) {
+			if(i2c_read(0x90, 0, 0, &data, 1) != 1) {
+				return ERR_READ_FAILED;
+			}
+			if(data > 10) {
+				index = 1;
+			}
+		}
+
+		if(index == 1) {
+			pFrame->first_throw = data;
+			if(pFrame->first_throw == 10) {
+				pFrame->second_throw = 0;
+				return index;
+			}
+		}
+		if(index == 2) {
+			pFrame->second_throw = data;
+			if(pFrame->first_throw + pFrame->second_throw > 10) {
+				index = 1;
+			} else {
+				return index;
+			}
+		}
+	}
+
 	//
 	// reminder about pointers:
 	//
@@ -53,8 +84,11 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 		return ERR_PARAM_NULL;
 	}
 	int sum=0;
+	for(int i = 0; i <= frames; i++) {
+		sum = pGame->frames[i].first_throw +pGame->frames[i].second_throw;
+	}
 
-	return -1;
+	return sum;
 }
 
 //
@@ -86,11 +120,40 @@ int play_game()
 	int sum=0;
 	bsk_game_t bsk_game;
 	int f=0;
+	int current = 1;
+	int ret;
+
+	while(1) {
+		ret = bsk_get_throw(&(bsk_game.frames[f]), current);
+
+		if(ret == current) {
+			current += 1;
+			if(ret == 2 && bsk_valid_frame(&(bsk_game.frames[f]))) {
+				sum = bsk_calculate(&bsk_game, f);
+				f = f + 1;
+				if(f > 9) {
+					break;
+				}
+				current = 1;
+			}
+		} else {
+			if(current == 2 && ret == 1) {
+				current = 1;
+				continue;
+			}
+			//return -1;
+		}
+
+
+		sum = bsk_calculate(&bsk_game, f);
 
 	//
 	// show initial score (zero)
 	//
+		disp_show_decimal( sum );
+		delay_1s();
+	}
 	disp_show_decimal( sum );
-
+			delay_1s();
 	return -1;
 }
