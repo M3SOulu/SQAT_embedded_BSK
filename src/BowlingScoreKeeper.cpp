@@ -37,10 +37,15 @@ int main(void)
     // Display setup
 	disp_on( DISP_SHOW_NONE );
 	disp_reset( DISP_SHOW_NONE );
+	// disp_reset( DISP_SHOW_ALL );
 
-	// Main loop -- you do not have to tocuh it
-	while( 1 ){
-		play_game();
+	// Main loop -- you do not have to touch it
+	while( 1 )
+	{
+		if (ERROR_IN_GAME == play_game())
+		{
+			return -1;
+		}
 		delay_1s();
 	}
     return 0 ;
