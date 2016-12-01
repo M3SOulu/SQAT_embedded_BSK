@@ -105,10 +105,7 @@ int disp_on(int alloff)
  ************************************************************************/
 
 //
-// 0 (zero) is 1+2+4+8+16+32 = 63
-#define SEGMENTS_0 63
-// 1 (one)  is 2+4 = 6
-#define SEGMENTS_1 6
+
 
 //
 // number segments are displayed with combination
@@ -127,33 +124,38 @@ int disp_on(int alloff)
 //
 // define these (correctly), now the all display as "-"
 //
-
-#define SEGMENTS_2 64
-#define SEGMENTS_3 64
-#define SEGMENTS_4 64
-#define SEGMENTS_5 64
-#define SEGMENTS_6 64
-#define SEGMENTS_7 64
-#define SEGMENTS_8 64
-#define SEGMENTS_9 64
+// 0 (zero) is 1+2+4+8+16+32 = 63
+#define SEGMENTS_A 119
+// 1 (one)  is 2+4 = 6
+#define SEGMENTS_E 121
+#define SEGMENTS_d 94
+#define SEGMENTS_n 84
+#define SEGMENTS_m 55
+#define SEGMENTS_o 92
+#define SEGMENTS_P 115
+#define SEGMENTS_s 109
+#define SEGMENTS_w 126
+#define SEGMENTS_9 00
 
 //
 // mapping of number to its segment data:
 //   element index  |  segment data
 //   0              |  63 (segments for zero)
 //   1              |   6 (segments for one)
-const char digit_segments[10]={
-		SEGMENTS_0,
-		SEGMENTS_1,
-		SEGMENTS_2,
-		SEGMENTS_3,
-		SEGMENTS_4,
-		SEGMENTS_5,
-		SEGMENTS_6,
-		SEGMENTS_7,
-		SEGMENTS_8,
-		SEGMENTS_9,
-};
+/*const char digit_segments[10]={
+		SEGMENTS_A,0,119,1,0,2,0,3,0,4,0,
+		SEGMENTS_E,0,121,1,0,2,0,3,0,4,0,
+		SEGMENTS_d,0,94,1,0,2,0,3,0,4,0,
+		SEGMENTS_n,0,84,1,0,2,0,3,0,4,0,
+		SEGMENTS_m,0,55,1,0,2,0,3,0,4,0,
+		SEGMENTS_m,0,55,1,0,2,0,3,0,4,0,
+		SEGMENTS_o,0,92,1,0,2,0,3,0,4,0,
+		SEGMENTS_P,0,115,1,0,2,0,3,0,4,0,
+		SEGMENTS_s,0,109,1,0,2,0,3,0,4,0,
+		SEGMENTS_w,0,126,1,0,2,0,3,0,4,0,
+};*/
+
+
 
 //
 // return the Nth rightmost digit from value
@@ -164,11 +166,31 @@ const char digit_segments[10]={
 //   417   | 2 | 4
 //   417   | 3 | 0
 //
+
+
 int disp_digit_of(int value,unsigned int n)
 {
-	return -1;
-}
+    int length = 0;
+    int i = 0;
+    int returnNumber = -1;
+    //calculate the length of the value
+    do{
+        value /= 10;
+        length++;
+    }while(value != 0);
+    //value to array
+    int array[length];
+    do{
+        array[i] = value % 10;
+        value /= 10;
+        i++;
+    }while(value != 0);
+    //if position is off limits
+    if(length < n) return -1;
+    returnNumber = array[n];
+    return returnNumber;
 
+    }
 
 //
 // map decimal numbers of "value" to digits in the
@@ -178,6 +200,10 @@ int disp_digit_of(int value,unsigned int n)
 int disp_show_decimal(int value)
 {
 	const int addr = HW_I2C_ADDR_HT16K33;
+
+	disp_msg_data[1] = SEGMENTS_E;
+	disp_msg_data[2] = SEGMENTS_A;
+
 
 	return i2c_write( addr,disp_msg_data,10 );
 }
