@@ -1,5 +1,4 @@
-/*
- * bsk.cpp
+* bsk.cpp
  *
  *  Created on: Oct 11, 2016
  *      Author: timppa
@@ -33,6 +32,12 @@ int bsk_get_throw(bsk_frame_t* pFrame,int index)
 	if ( 0==pFrame ){
 		return ERR_PARAM_NULL;
 	}
+	if(index == 1){
+		return pFrame->first_throw;
+	}
+	else if(index == 2){
+		return pFrame->second_throw;
+	}
 	//
 	// reminder about pointers:
 	//
@@ -53,8 +58,19 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 		return ERR_PARAM_NULL;
 	}
 	int sum=0;
+	for(int i = 0; i < frames; i++){
+		if(bsk_valid_frame(&pGame -> frames[i]) == 0){
+			sum += bsk_get_throw(&pGame-> frames[i], 1);
+			sum += bsk_get_throw(&pGame-> frames[i], 2);
+		}
+		else{
+			return -1;
+		}
+	}
+	return sum;
 
-	return -1;
+
+
 }
 
 //
@@ -66,11 +82,27 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 //
 int bsk_valid_frame(bsk_frame_t* pFrame)
 {
+	int first = 0;
+	int second = 0;
+
 	if ( 0==pFrame ){
 		return -1;
 	}
+	else{
+		first = bsk_get_throw(pFrame, 1);
+		second = bsk_get_throw(pFrame, 2);
+	}
+	if(first >= 0 && second >= 0){
+		if(first <= 10){
+			int total = first + second;
+			if(total >= 0 || total <= 10){
+				return 0;
+			}
+		}
+	}
 
-	return -1;
+
+	return 1;
 }
 
 //
@@ -91,6 +123,12 @@ int play_game()
 	// show initial score (zero)
 	//
 	disp_show_decimal( sum );
+	for(int i = 0; i < 10; i++){
+		disp_show_decimal(bsk_get_throw(bsk_game.frames[i], 1));
+		delay(50000);
+		disp_show_decimal(bsk_get_throw(bsk_game.frames[i], 2));
+	}
+
 
 	return -1;
 }
