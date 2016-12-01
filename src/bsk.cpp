@@ -41,6 +41,14 @@ int bsk_get_throw(bsk_frame_t* pFrame,int index)
 	// pFrame->first_throw = 2; set the value of "first_throw"
 	//
 
+	if(index == 1){
+		pFrame->first_throw = 2;
+	}else if(index == 2){
+		pFrame->second_throw = 3;
+	}else{
+		return ERR_PARAM_NULL;
+	}
+
 	return ERR_BAD_THROW;
 }
 
@@ -83,14 +91,16 @@ int bsk_valid_frame(bsk_frame_t* pFrame)
 int play_game()
 {
 	// use these variables if you wish; they are not compulsory
-	int sum=0;
+	int sum=1234;
 	bsk_game_t bsk_game;
 	int f=0;
 
 	//
 	// show initial score (zero)
 	//
-	disp_show_decimal( sum );
+	disp_show_decimal(sum);
+
+
 
 	return -1;
 }

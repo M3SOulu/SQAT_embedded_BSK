@@ -166,7 +166,25 @@ const char digit_segments[10]={
 //
 int disp_digit_of(int value,unsigned int n)
 {
-	return -1;
+	int length = 0;
+	int i = 0;
+	int returnNumber = -1;
+	//calculate the length of the value
+	do{
+		value /= 10;
+		length++;
+	}while(value != 0);
+	//value to array
+	int array[length];
+	do{
+		array[i] = value % 10;
+		value /= 10;
+		i++;
+	}while(value != 0);
+	//if position is off limits
+	if(length < n) return -1;
+	returnNumber = array[n];
+	return returnNumber;
 }
 
 
@@ -177,7 +195,59 @@ int disp_digit_of(int value,unsigned int n)
 //
 int disp_show_decimal(int value)
 {
+	int length = 0;
+	do{
+		value /= 10;
+		length++;
+	}while(value != 0);
+
+	int array[length];
 	const int addr = HW_I2C_ADDR_HT16K33;
+	//get digits from rightmost
+	for(int i = 0; i < length; i++){
+		array[i] = disp_digit_of(value, i);
+	}
+
+	//give digits correct values for display
+	for(int i = 0; i < length; i++){
+		switch(array[i]){
+			case 0:
+				array[i] = 63;
+				break;
+			case 1:
+				array[i] = 6;
+				break;
+			case 2:
+				array[i] = 91;
+				break;
+			case 3:
+				array[i] = 79;
+				break;
+			case 4:
+				array[i] = 102;
+				break;
+			case 5:
+				array[i] = 109;
+				break;
+			case 6:
+				array[i] = 124;
+				break;
+			case 7:
+				array[i] = 7;
+				break;
+			case 8:
+				array[i] = 127;
+				break;
+			case 9:
+				array[i] = 111;
+				break;
+		}
+	}
+	//give correct values to disp_msg_data
+	if(length > 0) disp_msg_data[1] = 6;//array[0];
+	if(length > 1) disp_msg_data[3] = 6;//array[1];
+	if(length > 2) disp_msg_data[7] = 6;//array[2];
+	if(length > 3) disp_msg_data[9] = 6;//array[3];
 
 	return i2c_write( addr,disp_msg_data,10 );
 }
