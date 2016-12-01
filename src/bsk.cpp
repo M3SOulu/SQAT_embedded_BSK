@@ -33,6 +33,10 @@ int bsk_get_throw(bsk_frame_t* pFrame,int index)
 	if ( 0==pFrame ){
 		return ERR_PARAM_NULL;
 	}
+	if (1 == index)
+		return pFrame->first_throw;
+	if (2 == index)
+		return pFrame->second_throw;
 	//
 	// reminder about pointers:
 	//
@@ -66,11 +70,22 @@ int bsk_calculate(bsk_game_t* pGame,int frames)
 //
 int bsk_valid_frame(bsk_frame_t* pFrame)
 {
+	int sum = 0;
 	if ( 0==pFrame ){
 		return -1;
 	}
+	sum = bsk_get_throw(pFrame, 1) + bsk_get_throw(pFrame,2);
+	if (sum > 10) {
+		return 1;
+	}
+	if (bsk_get_throw(pFrame, 1) < 0) {
+		return 1;
+	}
+	if (bsk_get_throw(pFrame, 1) < 0) {
+		return 1;
+	}
 
-	return -1;
+	return 0;
 }
 
 //
