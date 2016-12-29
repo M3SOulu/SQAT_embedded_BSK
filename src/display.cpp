@@ -128,14 +128,14 @@ int disp_on(int alloff)
 // define these (correctly), now the all display as "-"
 //
 
-#define SEGMENTS_2 64
-#define SEGMENTS_3 64
-#define SEGMENTS_4 64
-#define SEGMENTS_5 64
-#define SEGMENTS_6 64
-#define SEGMENTS_7 64
-#define SEGMENTS_8 64
-#define SEGMENTS_9 64
+#define SEGMENTS_2 91
+#define SEGMENTS_3 79
+#define SEGMENTS_4 102
+#define SEGMENTS_5 109
+#define SEGMENTS_6 125
+#define SEGMENTS_7 7
+#define SEGMENTS_8 127
+#define SEGMENTS_9 103
 
 //
 // mapping of number to its segment data:
@@ -162,11 +162,19 @@ const char digit_segments[10]={
 //   417   | 0 | 7
 //   417   | 1 | 1
 //   417   | 2 | 4
-//   417   | 3 | 0
+//   417   | 3 | -1
 //
 int disp_digit_of(int value,unsigned int n)
 {
-	return -1;
+	while (n-- > 0)
+	{
+		value /= 10;
+		if (value == 0)
+		{
+			return -1;
+		}
+	}
+	return (value % 10);
 }
 
 
